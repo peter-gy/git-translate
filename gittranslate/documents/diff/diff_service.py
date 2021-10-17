@@ -1,8 +1,11 @@
+import logging
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Optional, Callable
 
 from git import Repo, Diff
+
+log = logging.getLogger(__name__)
 
 
 @dataclass(init=True, repr=True, kw_only=True, frozen=True)
@@ -33,12 +36,16 @@ class DiffService:
                  if ``since_commit`` is not specified.
         """
         working_dir_path: str = self.repo.working_dir
+        log.debug(f'Scanning {working_dir_path} for file diffs')
         if since_commit is None:
+            log.debug('No commit ID specified. Returning all the files.')
             files = Path(working_dir_path).glob('**/*')
             # returning all the file names in the repo that are not inside the '.git' dir
             # and match the ``file_filter`` predicate
             return frozenset(file for file in files if '.git' not in file.parts and file_filter(file))
 
         # otherwise look at the diffs between the HEAD and the specified ``since_commit``
-        diffs: list[Diff] = self.repo.head.commit.diff(since_commit)
+        head_commit = self.repo.head.commit
+        diffs: list[Diff] = head_commit.diff(since_commit)
+        log.debug(f'Returning diffs between {since_commit} and {head_commit} (HEAD)')
         return frozenset(Path(working_dir_path, diff.a_path) for diff in diffs)

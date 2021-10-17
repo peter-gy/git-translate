@@ -1,9 +1,12 @@
+import logging
 import os
 
 from google.cloud import translate as gc_translate
 
 import gittranslate.translation.base as trans_base
 from gittranslate.translation.base import TranslationOptions
+
+log = logging.getLogger(__name__)
 
 
 class GoogleTranslationService(trans_base.TranslationService):
@@ -22,6 +25,7 @@ class GoogleTranslationService(trans_base.TranslationService):
         os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = service_key_path
         self._project_id = project_id
         self._client = gc_translate.TranslationServiceClient()
+        log.debug(f'Google Cloud Translation API Client initialized, using the service key: {service_key_path}')
 
     @property
     def project_id(self) -> str:
@@ -34,6 +38,7 @@ class GoogleTranslationService(trans_base.TranslationService):
         location = 'global'
         parent = f'projects/{self._project_id}/locations/{location}'
 
+        log.debug(f'Translating text using the options: {options}')
         response: gc_translate.TranslateTextResponse = self._client.translate_text(
             request={
                 "parent": parent,
