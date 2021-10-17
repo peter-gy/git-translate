@@ -2,7 +2,7 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Optional, Callable
 
-import git
+from git import Repo, Diff
 
 
 @dataclass(init=True, repr=True, kw_only=True, frozen=True)
@@ -12,7 +12,7 @@ class DiffService:
     Using this service ensures that only such files' content will be passed to the ``TranslationService``
     that have actually been modified since a specific commit.
     """
-    repo: git.Repo
+    repo: Repo
 
     def modified_files(self, *,
                        since_commit: Optional[str] = None,
@@ -40,5 +40,5 @@ class DiffService:
             return frozenset(file for file in files if '.git' not in file.parts and file_filter(file))
 
         # otherwise look at the diffs between the HEAD and the specified ``since_commit``
-        diffs: list[git.Diff] = self.repo.head.commit.diff(since_commit)
+        diffs: list[Diff] = self.repo.head.commit.diff(since_commit)
         return frozenset(Path(working_dir_path, diff.a_path) for diff in diffs)
