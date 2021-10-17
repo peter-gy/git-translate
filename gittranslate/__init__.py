@@ -1,5 +1,7 @@
 import logging.config
+import pathlib
 
-logging.config.fileConfig('./gittranslate/config/logging_config.ini')
+logging_config_file_path = pathlib.Path(__file__).parent.absolute() / 'config' / 'logging_config.ini'
+logging.config.fileConfig(logging_config_file_path)
 log = logging.getLogger(__name__)
 log.info('Logger Initialized')
