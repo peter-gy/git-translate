@@ -13,7 +13,7 @@ setup(
     packages=find_packages(),
     package_data={
         # Include all files from the 'gittranslate.config' package
-        "config": ["*"],
+        "gittranslate.config": ["*"],
     },
     project_urls={
         'GitHub': 'https://github.com/peter-gy/git-translate',
