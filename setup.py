@@ -11,6 +11,10 @@ setup(
     python_requires='>=3.10',
     install_requires=install_requires,
     packages=find_packages(),
+    package_data={
+        # Include all files from the 'gittranslate.config' package
+        "config": ["*"],
+    },
     project_urls={
         'GitHub': 'https://github.com/peter-gy/git-translate',
     },
