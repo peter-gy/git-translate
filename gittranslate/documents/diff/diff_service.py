@@ -48,4 +48,5 @@ class DiffService:
         head_commit = self.repo.head.commit
         diffs: list[Diff] = head_commit.diff(since_commit)
         log.debug(f'Returning diffs between {since_commit} and {head_commit} (HEAD)')
-        return frozenset(Path(working_dir_path, diff.a_path) for diff in diffs)
+        return frozenset(Path(working_dir_path, diff.a_path) for diff in diffs
+                         if file_filter(Path(working_dir_path, diff.a_path)))
